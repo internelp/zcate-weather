@@ -9,5 +9,5 @@ if [ $success -ge "1" ];then
 	echo 1
 else
 	echo 0
-	/usr/lib/zabbix/alertscripts/zcate -token="xxx" -title="异常天气预警" -platform=ios -body=$WEA
+	/usr/lib/zabbix/alertscripts/zcate -token="xxx" -title="异常天气预警" -platform=ios -body="$WEA"
 fi

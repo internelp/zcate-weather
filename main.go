@@ -16,16 +16,29 @@ import (
 
 // Weather 天气信息
 type Weather struct {
-	Weatherinfo struct {
-		City    string `json:"city"`
-		Cityid  string `json:"cityid"`
-		Temp1   string `json:"temp1"`
-		Temp2   string `json:"temp2"`
-		Weather string `json:"weather"`
-		Img1    string `json:"img1"`
-		Img2    string `json:"img2"`
-		Ptime   string `json:"ptime"`
-	} `json:"weatherinfo"`
+	Data struct {
+		Yesterday struct {
+			Date string `json:"date"`
+			High string `json:"high"`
+			Fx   string `json:"fx"`
+			Low  string `json:"low"`
+			Fl   string `json:"fl"`
+			Type string `json:"type"`
+		} `json:"yesterday"`
+		City     string `json:"city"`
+		Forecast []struct {
+			Date      string `json:"date"`
+			High      string `json:"high"`
+			Fengli    string `json:"fengli"`
+			Low       string `json:"low"`
+			Fengxiang string `json:"fengxiang"`
+			Type      string `json:"type"`
+		} `json:"forecast"`
+		Ganmao string `json:"ganmao"`
+		Wendu  string `json:"wendu"`
+	} `json:"data"`
+	Status int    `json:"status"`
+	Desc   string `json:"desc"`
 }
 
 var weather Weather
@@ -39,18 +52,18 @@ func main() {
 	badWeather := []string{"雨", "雷", "尘", "霾", "雹", "雪", "雾", "沙"}
 	for index := 0; index < len(badWeather); index++ {
 		// fmt.Println(badWeather[index])
-		if strings.Contains(weather.Weatherinfo.Weather, badWeather[index]) {
-			fmt.Printf("%v，今日%v，%v-%v。", weather.Weatherinfo.City, weather.Weatherinfo.Weather, weather.Weatherinfo.Temp1, weather.Weatherinfo.Temp2)
+		if strings.Contains(weather.Data.Forecast[0].Type, badWeather[index]) {
+			fmt.Printf("%v，今日%v，%v，%v。", weather.Data.City, weather.Data.Forecast[0].Type, weather.Data.Forecast[0].Low, weather.Data.Forecast[0].High)
 			os.Exit(0)
 		}
 	}
-	log.Fatalf("%v，今日%v，%v-%v。", weather.Weatherinfo.City, weather.Weatherinfo.Weather, weather.Weatherinfo.Temp1, weather.Weatherinfo.Temp2)
+	log.Fatalf("%v，今日%v，%v，%v。", weather.Data.City, weather.Data.Forecast[0].Type, weather.Data.Forecast[0].Low, weather.Data.Forecast[0].High)
 }
 
 func getWeather() {
 	client := &http.Client{}
 
-	resp, err := client.Get(fmt.Sprintf("http://www.weather.com.cn/data/cityinfo/%s.html", cityID))
+	resp, err := client.Get(fmt.Sprintf("http://wthrcdn.etouch.cn/weather_mini?citykey=%s", cityID))
 	if err != nil {
 		log.Fatalln(err)
 	}
